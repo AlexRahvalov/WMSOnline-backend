@@ -1,29 +1,20 @@
 // WMSOnline-backend/config/database.js
 const { Sequelize } = require('sequelize');
-require('dotenv').config(); // Загружаем переменные окружения из .env
+require('dotenv').config();
 
-// Создание экземпляра Sequelize с настройками подключения
-const sequelize = new Sequelize(
-  process.env.MYSQL_DATABASE, // Имя базы данных
-  process.env.MYSQL_USER,     // Пользователь
-  process.env.MYSQL_PASS,     // Пароль
-  {
-    host: process.env.MYSQL_HOST, // Хост
-    port: process.env.MYSQL_PORT, // Порт
-    dialect: 'mariadb',            // Диалект базы данных
-  }
-);
+const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_USER, process.env.MYSQL_PASS, {
+  host: process.env.MYSQL_HOST,
+  port: process.env.MYSQL_PORT,
+  dialect: 'mariadb', // или 'mysql', если вы используете MySQL
+});
 
-// Проверка подключения
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log('Подключение к базе данных успешно.');
+    console.log('Соединение с базой данных успешно установлено.');
   } catch (error) {
     console.error('Ошибка при подключении к базе данных:', error);
-    process.exit(1); // Завершение процесса с кодом ошибки
   }
 };
 
-// Экспортируем экземпляр Sequelize и функцию проверки подключения
-module.exports = { sequelize, testConnection };
+module.exports = { sequelize, testConnection }; // Экспортируем sequelize и testConnection
