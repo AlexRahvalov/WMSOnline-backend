@@ -1,32 +1,35 @@
-// WMSOnline-backend/models/User.js
+// WMSOnline-backend/models/user.js
+
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database'); // Импортируем sequelize
-const bcrypt = require('bcrypt'); // Подключаем bcrypt
+const { sequelize } = require('./index');
 
 const User = sequelize.define('User', {
-    nickname: {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    username: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: true
+    },
+    password_hash: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true,
-        },
+        unique: true
     },
-    password: {
+    role: {
         type: DataTypes.STRING,
-        allowNull: false,
-    },
-});
-
-// Хэширование пароля перед сохранением
-User.beforeCreate(async (user) => {
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
+        defaultValue: 'user'
+    }
+}, {
+    tableName: 'users',
+    timestamps: false
 });
 
 module.exports = User;
