@@ -1,9 +1,9 @@
-// WMSOnline-backend/models/contractor.js
+// WMSOnline-backend/models/company.js
 
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('./index');
 
-const Contractor = sequelize.define('Contractor', {
+const Company = sequelize.define('Company', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -21,17 +21,17 @@ const Contractor = sequelize.define('Contractor', {
         type: DataTypes.STRING,
         allowNull: true
     },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    type: {
-        type: DataTypes.STRING,
-        allowNull: true // Например, "поставщик" или "заказчик"
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id'
+        }
     }
 }, {
-    tableName: 'contractors',
+    tableName: 'companies',
     timestamps: false
 });
 
-module.exports = Contractor;
+module.exports = Company;

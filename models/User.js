@@ -1,5 +1,3 @@
-// WMSOnline-backend/models/user.js
-
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('./index');
 
@@ -23,9 +21,13 @@ const User = sequelize.define('User', {
         allowNull: false,
         unique: true
     },
-    role: {
+    first_name: {
         type: DataTypes.STRING,
-        defaultValue: 'user'
+        allowNull: false
+    },
+    last_name: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 }, {
     tableName: 'users',

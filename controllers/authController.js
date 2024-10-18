@@ -1,25 +1,41 @@
 // WMSOnline-backend/controllers/authController.js
 
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 require('dotenv').config();
 
 const loginUser = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
+
+    // Проверка наличия email и password
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email и пароль обязательны.' });
+    }
+
     try {
-        // Проверяем, что пользователь существует
-        const user = await User.findOne({ where: { username } });
-        // Проверяем введённый пароль с хэшированным паролем в базе данных
-        if (!user || !await bcrypt.compare(password, user.password_hash)) { // исправлено с user.password на user.password_hash
-            return res.status(401).json({ message: 'Invalid credentials' });
+        // Поиск пользователя по электронной почте
+        const user = await User.findOne({ where: { email } });
+        
+        // Проверка существования пользователя
+        if (!user) {
+            return res.status(401).json({ message: 'Пользователь не найден.' });
         }
 
-        // Генерируем JWT токен
-        const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ message: 'Login successful', token });
+        // Проверка совпадения пароля
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Неверные учетные данные' });
+        }
+
+        // Генерация JWT токена
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Возврат успешного ответа с токеном
+        res.json({ message: 'Вход выполнен успешно', token });
     } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error: error.message });
+        console.error('Ошибка входа:', error);
+        res.status(500).json({ message: 'Ошибка при входе', error: error.message });
     }
 };
 

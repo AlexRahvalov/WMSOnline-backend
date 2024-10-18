@@ -2,7 +2,7 @@
 
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('./index');
-const Group = require('./group'); // Связь с группой товаров
+const Group = require('./group');
 
 const Product = sequelize.define('Product', {
     id: {
